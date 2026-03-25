@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" href="image_18.png">
+    <link rel="icon" type="image/png" href="image_18.png">
+    <link rel="manifest" href="manifest.json"> <title>Slug Maker - Fridge Combo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="fridge-container">
+
+    <header>
+        <h1>Slug Maker</h1>
+        <p class="subtitle">Enter title to create a clean URL...</p>
+    </header>
+
+    <main>
+        <div class="input-group">
+            <textarea id="sourceText" placeholder="e.g., My Awesome Blog Post 2026" class="fc-input"></textarea>
+            <span id="clearAll" class="fc-clear-text">[ CLEAR ALL ]</span>
+        </div>
+
+        <div class="output-group fc-radius-15">
+            <label>Slug Preview:</label>
+            <div id="slugPreview" class="fc-preview-area"></div>
+        </div>
+
+        <div class="button-group">
+            <button id="copySlug" class="fc-btn-primary">Copy Slug</button>
+            <div id="charCounter" class="fc-counter-badge">0 / 75</div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-buttons">
+            <a href="https://ko-fi.com/afrorakda" target="_blank" class="fc-btn-kofi">
+                <span class="emoji">🍵</span> Support me on Ko-fi
+            </a>
+            <button id="addToHome" class="fc-btn-secondary">Add to Home Screen</button>
+        </div>
+
+        <div class="legal-info">
+            <p>No login / No tracking / No ads / Browser only</p>
+            <p><a href="privacy.html">Privacy Policy</a> / afrorakda © 2026</p>
+        </div>
+    </footer>
+
+</div>
+
+<div id="installModal" class="modal fc-hidden">
+    <div class="modal-content fc-radius-15">
+        </div>
+</div>
+
+</body>
+</html>
