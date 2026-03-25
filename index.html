@@ -34,7 +34,7 @@
         h1 { font-size: 2rem; margin-bottom: 5px; font-weight: 800; }
         .subtitle { color: #999; font-size: 0.9rem; margin-bottom: 30px; }
 
-        /* Input Area */
+        /* Input Area (画像0/3準拠) */
         .input-group { position: relative; margin-bottom: 10px; }
         textarea {
             width: 100%;
@@ -59,7 +59,7 @@
             text-decoration: none;
         }
 
-        /* Preview Area */
+        /* Preview Area (画像3準拠) */
         .preview-box {
             background: var(--accent);
             border-radius: var(--radius);
@@ -74,7 +74,7 @@
             font-family: monospace;
         }
 
-        /* Actions */
+        /* Actions (画像3準拠) */
         .action-row {
             display: flex;
             align-items: center;
@@ -102,40 +102,52 @@
         }
         .counter-badge.over { color: var(--error); border: 1px solid var(--error); }
 
-        /* Footer Components */
-        .footer-btns { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
+        /* Footer Components (★ここをスリムに修正) */
+        .footer-btns { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; /* 中央寄せ */
+            gap: 10px; 
+            margin-bottom: 30px; 
+        }
         .kofi-btn {
+            display: inline-flex; /* 内容に合わせる */
+            align-items: center;
+            gap: 5px;
             background: var(--main);
             color: #fff;
             text-decoration: none;
-            padding: 12px;
+            padding: 12px 20px; /* 横パディングで幅を調整 */
             border-radius: var(--radius);
             font-weight: bold;
             font-size: 0.9rem;
         }
         .home-btn {
+            display: inline-block; /* 内容に合わせる */
             background: var(--accent);
             color: var(--main);
             border: none;
-            padding: 12px;
+            padding: 12px 20px; /* 横パディングで幅を調整 */
             border-radius: var(--radius);
             font-weight: bold;
             cursor: pointer;
+            width: auto; /* 幅を自動に */
         }
 
         footer { font-size: 0.75rem; color: #bbb; line-height: 1.6; }
         footer a { color: #bbb; text-decoration: underline; }
 
-        /* Simple Modal */
+        /* Simple Modal (画像1/5準拠) */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5); justify-content: center; align-items: center;
+            z-index: 1000;
         }
         .modal-content {
             background: #fff; padding: 30px; border-radius: var(--radius);
             max-width: 300px; position: relative; text-align: left;
         }
-        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; }
+        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #aaa; }
     </style>
 </head>
 <body>
@@ -157,7 +169,9 @@
     </div>
 
     <div class="footer-btns">
-        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕ Support me on Ko-fi</a>
+        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">
+            <span>☕</span> Support me on Ko-fi
+        </a>
         <button class="home-btn" id="homeBtn">Add to Home Screen</button>
     </div>
 
@@ -191,9 +205,9 @@
             .toString()
             .normalize('NFKD') 
             .toLowerCase()
+            .trim()
             .replace(/[^\w\s-]/g, '') // 日本語・記号を抹殺
             .replace(/[\s_]+/g, '-')  // スペースをハイフンに
-            .replace(/^-+|-+$/g, '')  // 前後のハイフン削除
             .replace(/-+/g, '-');     // 連続ハイフンを1つに
     }
 
