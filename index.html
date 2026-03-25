@@ -2,58 +2,230 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Slug Maker - Fridge Combo</title>
     <link rel="apple-touch-icon" href="image_18.png">
     <link rel="icon" type="image/png" href="image_18.png">
-    <link rel="manifest" href="manifest.json"> <title>Slug Maker - Fridge Combo</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --bg: #fff;
+            --main: #333;
+            --accent: #eee;
+            --input-bg: #fafafa;
+            --radius: 15px;
+            --error: #ff4d4d;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            color: var(--main);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .fridge-container { width: 100%; max-width: 400px; text-align: center; }
+
+        h1 { font-size: 2rem; margin-bottom: 5px; font-weight: 800; }
+        .subtitle { color: #999; font-size: 0.9rem; margin-bottom: 30px; }
+
+        /* Input Area */
+        .input-group { position: relative; margin-bottom: 10px; }
+        textarea {
+            width: 100%;
+            height: 120px;
+            background: var(--input-bg);
+            border: 2px solid var(--accent);
+            border-radius: var(--radius);
+            padding: 15px;
+            font-size: 1rem;
+            color: var(--main);
+            resize: none;
+            outline: none;
+        }
+
+        .clear-btn {
+            display: block;
+            text-align: right;
+            font-size: 0.8rem;
+            color: #999;
+            cursor: pointer;
+            margin-top: 5px;
+            text-decoration: none;
+        }
+
+        /* Preview Area */
+        .preview-box {
+            background: var(--accent);
+            border-radius: var(--radius);
+            padding: 15px;
+            margin: 20px 0;
+            min-height: 60px;
+            word-break: break-all;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        /* Actions */
+        .action-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+        .main-btn {
+            flex: 1;
+            background: var(--main);
+            color: #fff;
+            border: none;
+            padding: 18px;
+            border-radius: var(--radius);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .counter-badge {
+            background: var(--accent);
+            padding: 10px 15px;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            font-weight: bold;
+            min-width: 60px;
+        }
+        .counter-badge.over { color: var(--error); border: 1px solid var(--error); }
+
+        /* Footer Components */
+        .footer-btns { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
+        .kofi-btn {
+            background: var(--main);
+            color: #fff;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: var(--radius);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .home-btn {
+            background: var(--accent);
+            color: var(--main);
+            border: none;
+            padding: 12px;
+            border-radius: var(--radius);
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        footer { font-size: 0.75rem; color: #bbb; line-height: 1.6; }
+        footer a { color: #bbb; text-decoration: underline; }
+
+        /* Simple Modal */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: #fff; padding: 30px; border-radius: var(--radius);
+            max-width: 300px; position: relative; text-align: left;
+        }
+        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; }
+    </style>
 </head>
 <body>
 
 <div class="fridge-container">
+    <h1>Slug Maker</h1>
+    <p class="subtitle">Enter title to create a clean URL...</p>
 
-    <header>
-        <h1>Slug Maker</h1>
-        <p class="subtitle">Enter title to create a clean URL...</p>
-    </header>
+    <div class="input-group">
+        <textarea id="input" placeholder="e.g., My Awesome Blog Post 2026"></textarea>
+        <div id="clear" class="clear-btn">[ CLEAR ALL ]</div>
+    </div>
 
-    <main>
-        <div class="input-group">
-            <textarea id="sourceText" placeholder="e.g., My Awesome Blog Post 2026" class="fc-input"></textarea>
-            <span id="clearAll" class="fc-clear-text">[ CLEAR ALL ]</span>
-        </div>
+    <div class="preview-box" id="preview">---</div>
 
-        <div class="output-group fc-radius-15">
-            <label>Slug Preview:</label>
-            <div id="slugPreview" class="fc-preview-area"></div>
-        </div>
+    <div class="action-row">
+        <button class="main-btn" id="copy">Copy Slug</button>
+        <div class="counter-badge" id="counter">0 / 75</div>
+    </div>
 
-        <div class="button-group">
-            <button id="copySlug" class="fc-btn-primary">Copy Slug</button>
-            <div id="charCounter" class="fc-counter-badge">0 / 75</div>
-        </div>
-    </main>
+    <div class="footer-btns">
+        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕ Support me on Ko-fi</a>
+        <button class="home-btn" id="homeBtn">Add to Home Screen</button>
+    </div>
 
     <footer>
-        <div class="footer-buttons">
-            <a href="https://ko-fi.com/afrorakda" target="_blank" class="fc-btn-kofi">
-                <span class="emoji">🍵</span> Support me on Ko-fi
-            </a>
-            <button id="addToHome" class="fc-btn-secondary">Add to Home Screen</button>
-        </div>
-
-        <div class="legal-info">
-            <p>No login / No tracking / No ads / Browser only</p>
-            <p><a href="privacy.html">Privacy Policy</a> / afrorakda © 2026</p>
-        </div>
+        No login / No tracking / No ads / Browser only<br>
+        <a href="#">Privacy Policy</a> / afrorakda © 2026
     </footer>
-
 </div>
 
-<div id="installModal" class="modal fc-hidden">
-    <div class="modal-content fc-radius-15">
-        </div>
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" id="close">&times;</span>
+        <strong>📱 Install</strong><br><br>
+        <p>Add to your home screen.</p>
+        <p>🍏 <strong>iPhone (Safari):</strong><br>Tap Share, then Add to Home Screen.</p>
+        <p>🤖 <strong>Android (Chrome):</strong><br>Tap Menu (⋮), then Add to home screen.</p>
+    </div>
 </div>
+
+<script>
+    const input = document.getElementById('input');
+    const preview = document.getElementById('preview');
+    const counter = document.getElementById('counter');
+    const copyBtn = document.getElementById('copy');
+    const clearBtn = document.getElementById('clear');
+    const modal = document.getElementById('modal');
+
+    // Slug Logic (The Stoic Filter)
+    function generateSlug(text) {
+        return text
+            .toString()
+            .normalize('NFKD') 
+            .toLowerCase()
+            .replace(/[^\w\s-]/g, '') // 日本語・記号を抹殺
+            .replace(/[\s_]+/g, '-')  // スペースをハイフンに
+            .replace(/^-+|-+$/g, '')  // 前後のハイフン削除
+            .replace(/-+/g, '-');     // 連続ハイフンを1つに
+    }
+
+    input.addEventListener('input', () => {
+        const slug = generateSlug(input.value);
+        preview.textContent = slug || '---';
+        const len = slug.length;
+        counter.textContent = `${len} / 75`;
+        counter.classList.toggle('over', len > 75);
+    });
+
+    copyBtn.addEventListener('click', () => {
+        const text = preview.textContent;
+        if (text !== '---') {
+            navigator.clipboard.writeText(text);
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => copyBtn.textContent = originalText, 1500);
+        }
+    });
+
+    clearBtn.addEventListener('click', () => {
+        input.value = '';
+        preview.textContent = '---';
+        counter.textContent = '0 / 75';
+        counter.classList.remove('over');
+    });
+
+    document.getElementById('homeBtn').onclick = () => modal.style.display = 'flex';
+    document.getElementById('close').onclick = () => modal.style.display = 'none';
+    window.onclick = (event) => { if (event.target == modal) modal.style.display = 'none'; };
+</script>
 
 </body>
 </html>
