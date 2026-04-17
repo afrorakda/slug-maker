@@ -21,11 +21,13 @@
             --error: #ff4d4d;
         }
 
+        /* 鉄壁の全方位ガード（body全域） */
         * { 
             -webkit-tap-highlight-color: transparent; 
             box-sizing: border-box;
-            /* 基本全域で長押しメニューを禁止 */
             -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
         }
 
         body {
@@ -51,12 +53,12 @@
         .hub-link { 
             text-decoration: none; font-size: 0.7rem; font-weight: 800; color: #999; 
             background: transparent; border: 1px solid #ddd; padding: 5px 10px; border-radius: 10px;
-            user-select: none !important; -webkit-user-select: none !important;
         }
 
         .input-group { display: flex; flex-direction: column; gap: 6px; position: relative; }
-        label { font-size: 0.7rem; font-weight: 800; color: #aaa; padding-left: 5px; user-select: none !important; }
+        label { font-size: 0.7rem; font-weight: 800; color: #aaa; padding-left: 5px; }
 
+        /* 入力エリアのみ選択を例外的に許可 */
         textarea {
             width: 100%; height: 100px;
             background-color: var(--input-bg); border: 2.5px solid var(--accent);
@@ -64,7 +66,6 @@
             font-size: 17px; color: var(--main); outline: none; transition: 0.2s;
             line-height: 1.4; font-weight: 600; resize: none;
             -webkit-appearance: none; -webkit-text-fill-color: var(--main); opacity: 1 !important;
-            /* 入力欄のみ選択を許可 */
             -webkit-touch-callout: default !important;
             -webkit-user-select: text !important;
             user-select: text !important;
@@ -76,7 +77,6 @@
             width: 28px; height: 28px; background: rgba(0,0,0,0.05); color: #888;
             border-radius: 50%; display: none; align-items: center; justify-content: center;
             font-size: 16px; font-weight: bold; border: none; cursor: pointer;
-            user-select: none !important;
         }
         textarea:not(:placeholder-shown) + .clr-btn { display: flex; }
 
@@ -85,15 +85,8 @@
             padding: 20px; min-height: 80px; word-break: break-all;
             display: flex; align-items: center; justify-content: center;
             font-weight: 800; font-family: ui-monospace, monospace; font-size: 1.1rem;
-            text-align: center; color: var(--main); transition: background 0.2s, border 0.2s;
+            text-align: center; color: var(--main); transition: background 0.2s;
             position: relative; overflow: hidden;
-            /* 鉄壁の長押し・選択禁止 */
-            -webkit-touch-callout: none !important;
-            -webkit-user-select: none !important;
-            -khtml-user-select: none !important;
-            -moz-user-select: none !important;
-            -ms-user-select: none !important;
-            user-select: none !important;
         }
         .preview-box.flash { background: #fff; border: 2.5px solid var(--main); }
 
@@ -103,7 +96,6 @@
             border: none; border-radius: var(--radius);
             padding: 18px; font-size: 1.1rem; font-weight: 900;
             cursor: pointer; -webkit-appearance: none;
-            user-select: none !important;
         }
         .main-btn:active { transform: scale(0.97); }
 
@@ -115,7 +107,7 @@
 
         .status-msg { height: 24px; text-align: center; font-size: 0.8rem; font-weight: 800; color: #4CAF50; }
 
-        footer { width: 100%; padding: 40px 0; text-align: center; border-top: 1px solid #f5f5f5; user-select: none !important; }
+        footer { width: 100%; padding: 40px 0; text-align: center; border-top: 1px solid #f5f5f5; }
         .footer-btns { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; align-items: center; }
         .outline-btn { 
             width: 100%; max-width: 240px; background: #fff; color: var(--main); border: 2px solid var(--main); 
@@ -188,7 +180,7 @@
     const copyBtn = document.getElementById('copyBtn');
     const status = document.getElementById('status');
 
-    // JSでも右クリック・長押しメニューを禁止
+    // JSでの右クリック・長押しイベントの徹底キャンセル
     document.addEventListener('contextmenu', function(e) {
         if (e.target.tagName !== 'TEXTAREA') e.preventDefault();
     }, false);
