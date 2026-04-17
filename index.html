@@ -2,10 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <title>Slug Maker - Fridge Combo</title>
+    
+    <link rel="icon" href="image_18.png">
     <link rel="apple-touch-icon" href="image_18.png">
-    <link rel="icon" type="image/png" href="image_18.png">
+
     <style>
         :root {
             --bg: #fff;
@@ -13,181 +17,149 @@
             --accent: #eee;
             --input-bg: #fafafa;
             --radius: 15px;
+            --placeholder: #bbb;
             --error: #ff4d4d;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
         body {
-            margin: 0;
-            background-color: var(--bg);
-            color: var(--main);
+            margin: 0; padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            background-color: var(--bg); color: var(--main);
+            display: flex; flex-direction: column; min-height: 100vh; align-items: center;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .fridge-container { width: 100%; max-width: 400px; text-align: center; }
+        .container {
+            width: 100%; max-width: 400px; padding: 20px 20px 80px;
+            flex-grow: 1; display: flex; flex-direction: column; gap: 20px;
+        }
 
-        h1 { font-size: 2rem; margin-bottom: 5px; font-weight: 800; }
-        .subtitle { color: #999; font-size: 0.9rem; margin-bottom: 30px; }
+        header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 10px; width: 100%;
+        }
+        .title-group h1 { font-size: 1.5rem; font-weight: 900; margin: 0; letter-spacing: -1px; }
+        .subtitle { font-size: 0.75rem; color: #777; font-weight: 600; margin-top: 2px; }
 
-        /* Input Area (画像0/3準拠) */
-        .input-group { position: relative; margin-bottom: 10px; }
+        .hub-link { 
+            text-decoration: none; font-size: 0.7rem; font-weight: 800; color: #999; 
+            background: transparent; border: 1px solid #ddd; padding: 5px 10px; border-radius: 10px; 
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 6px; position: relative; }
+        label { font-size: 0.7rem; font-weight: 800; color: #aaa; padding-left: 5px; }
+
         textarea {
-            width: 100%;
-            height: 120px;
-            background: var(--input-bg);
-            border: 2px solid var(--accent);
-            border-radius: var(--radius);
-            padding: 15px;
-            font-size: 1rem;
-            color: var(--main);
-            resize: none;
-            outline: none;
+            width: 100%; height: 100px;
+            background-color: var(--input-bg); border: 2.5px solid var(--accent);
+            border-radius: var(--radius); padding: 15px;
+            font-size: 17px; color: var(--main); outline: none; transition: 0.2s;
+            line-height: 1.4; font-weight: 600; resize: none;
+            /* iOS Safari対策 */
+            -webkit-appearance: none; -webkit-text-fill-color: var(--main); opacity: 1 !important;
         }
+        textarea:focus { border-color: var(--main); background: #fff; }
+        textarea::placeholder { color: var(--placeholder); -webkit-text-fill-color: var(--placeholder); }
 
-        .clear-btn {
-            display: block;
-            text-align: right;
-            font-size: 0.8rem;
-            color: #999;
-            cursor: pointer;
-            margin-top: 5px;
-            text-decoration: none;
+        .clr-btn {
+            position: absolute; right: 12px; bottom: 12px;
+            width: 28px; height: 28px; background: rgba(0,0,0,0.05); color: #888;
+            border-radius: 50%; display: none; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: bold; border: none; cursor: pointer;
         }
+        textarea:not(:placeholder-shown) + .clr-btn { display: flex; }
 
-        /* Preview Area (画像3準拠) */
         .preview-box {
-            background: var(--accent);
-            border-radius: var(--radius);
-            padding: 15px;
-            margin: 20px 0;
-            min-height: 60px;
-            word-break: break-all;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-family: monospace;
+            background: var(--accent); border-radius: var(--radius);
+            padding: 20px; min-height: 80px; word-break: break-all;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-family: ui-monospace, monospace; font-size: 1.1rem;
+            text-align: center; color: var(--main);
         }
 
-        /* Actions (画像3準拠) */
-        .action-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 40px;
-        }
+        .action-row { display: flex; align-items: center; gap: 10px; }
         .main-btn {
-            flex: 1;
-            background: var(--main);
-            color: #fff;
-            border: none;
-            padding: 18px;
-            border-radius: var(--radius);
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
+            flex: 1; background-color: var(--main); color: #fff;
+            border: none; border-radius: var(--radius);
+            padding: 18px; font-size: 1.1rem; font-weight: 900;
+            cursor: pointer; -webkit-appearance: none;
         }
+        .main-btn:active { transform: scale(0.97); }
+
         .counter-badge {
-            background: var(--accent);
-            padding: 10px 15px;
-            border-radius: var(--radius);
-            font-size: 0.8rem;
-            font-weight: bold;
-            min-width: 60px;
+            background: var(--accent); padding: 18px 15px;
+            border-radius: var(--radius); font-size: 0.8rem;
+            font-weight: 800; min-width: 75px; text-align: center;
         }
-        .counter-badge.over { color: var(--error); border: 1px solid var(--error); }
+        .counter-badge.over { color: var(--error); border: 2px solid var(--error); }
 
-        /* Footer Components (★ここをスリムに修正) */
-        .footer-btns { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; /* 中央寄せ */
-            gap: 10px; 
-            margin-bottom: 30px; 
-        }
-        .kofi-btn {
-            display: inline-flex; /* 内容に合わせる */
-            align-items: center;
-            gap: 5px;
-            background: var(--main);
-            color: #fff;
-            text-decoration: none;
-            padding: 12px 20px; /* 横パディングで幅を調整 */
-            border-radius: var(--radius);
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-        .home-btn {
-            display: inline-block; /* 内容に合わせる */
-            background: var(--accent);
-            color: var(--main);
-            border: none;
-            padding: 12px 20px; /* 横パディングで幅を調整 */
-            border-radius: var(--radius);
-            font-weight: bold;
+        .status-msg { height: 24px; text-align: center; font-size: 0.8rem; font-weight: 800; color: #4CAF50; }
+
+        footer { width: 100%; padding: 40px 0; text-align: center; border-top: 1px solid #f5f5f5; }
+        .footer-btns { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; align-items: center; }
+        .outline-btn { 
+            width: 100%; max-width: 240px; background: #fff; color: var(--main); border: 2px solid var(--main); 
+            padding: 12px; border-radius: var(--radius); text-decoration: none; 
+            font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
             cursor: pointer;
-            width: auto; /* 幅を自動に */
         }
+        .privacy-link { color: inherit; text-decoration: underline; }
+        .copy-info { font-size: 11px; color: #999; font-weight: 600; line-height: 1.6; }
 
-        footer { font-size: 0.75rem; color: #bbb; line-height: 1.6; }
-        footer a { color: #bbb; text-decoration: underline; }
-
-        /* Simple Modal (画像1/5準拠) */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); justify-content: center; align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: #fff; padding: 30px; border-radius: var(--radius);
-            max-width: 300px; position: relative; text-align: left;
-        }
-        .close-modal { position: absolute; top: 10px; right: 15px; font-size: 1.5rem; cursor: pointer; color: #aaa; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #fff; padding: 30px; border-radius: var(--radius); width: 85%; max-width: 340px; text-align: center; position: relative; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; color: #888; cursor: pointer; }
     </style>
 </head>
 <body>
-
-<div class="fridge-container">
-    <h1>Slug Maker</h1>
-    <p class="subtitle">Enter title to create a clean URL...</p>
-
+<div class="container">
+    <header>
+        <div class="title-group">
+            <h1>Slug Maker</h1>
+            <p class="subtitle">Title to clean URL slug.</p>
+        </div>
+        <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
+    </header>
+    
     <div class="input-group">
+        <label>INPUT TITLE</label>
         <textarea id="input" placeholder="e.g., My Awesome Blog Post 2026"></textarea>
-        <div id="clear" class="clear-btn">[ CLEAR ALL ]</div>
+        <button class="clr-btn" onclick="clearAll()">×</button>
     </div>
 
     <div class="preview-box" id="preview">---</div>
 
     <div class="action-row">
-        <button class="main-btn" id="copy">Copy Slug</button>
+        <button class="main-btn" id="copyBtn" onclick="copySlug()">Copy Slug</button>
         <div class="counter-badge" id="counter">0 / 75</div>
     </div>
 
-    <div class="footer-btns">
-        <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">
-            <span>☕</span> Support me on Ko-fi
-        </a>
-        <button class="home-btn" id="homeBtn">Add to Home Screen</button>
-    </div>
+    <div class="status-msg" id="status"></div>
 
     <footer>
-        No login / No tracking / No ads / Browser only<br>
-        <a href="#">Privacy Policy</a> / afrorakda © 2026
+        <div class="footer-btns">
+            <a href="https://ko-fi.com/afrorakda" target="_blank" class="outline-btn" id="kofi-btn">☕️buy me a coffee</a>
+            <button class="outline-btn" onclick="showModal()" id="install-btn">Add to Home Screen</button>
+        </div>
+        <div class="copy-info">
+            No login / No tracking / No ads / Browser only<br>
+            <a href="https://afrorakda.com/privacy/" class="privacy-link">Privacy Policy</a><br>
+            afrorakda © 2026
+        </div>
     </footer>
 </div>
 
-<div id="modal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" id="close">&times;</span>
-        <strong>📱 Install</strong><br><br>
-        <p>Add to your home screen.</p>
-        <p>🍏 <strong>iPhone (Safari):</strong><br>Tap Share, then Add to Home Screen.</p>
-        <p>🤖 <strong>Android (Chrome):</strong><br>Tap Menu (⋮), then Add to home screen.</p>
+<div id="installModal" class="modal" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="modal-close" onclick="closeModal()">×</span>
+        <h3 id="m-title" style="margin:0 0 10px;">📱 Install</h3>
+        <p id="m-desc" style="font-size: 0.85rem; color: #666; margin-bottom:15px;">Add to your home screen.</p>
+        <div style="background:#fafafa; padding:15px; border-radius:15px; text-align:left; font-size:0.85rem; line-height: 1.6;">
+            <p id="m-ios">🍏 <b>iPhone (Safari):</b><br>Tap <b>Share</b>, then <b>Add to Home Screen</b>.</p>
+            <p id="m-and" style="margin-bottom:0;">🤖 <b>Android (Chrome):</b><br>Tap <b>Menu (⋮)</b>, then <b>Add to home screen</b>.</p>
+        </div>
     </div>
 </div>
 
@@ -195,20 +167,18 @@
     const input = document.getElementById('input');
     const preview = document.getElementById('preview');
     const counter = document.getElementById('counter');
-    const copyBtn = document.getElementById('copy');
-    const clearBtn = document.getElementById('clear');
-    const modal = document.getElementById('modal');
+    const copyBtn = document.getElementById('copyBtn');
+    const status = document.getElementById('status');
 
-    // Slug Logic (The Stoic Filter)
     function generateSlug(text) {
         return text
             .toString()
             .normalize('NFKD') 
             .toLowerCase()
             .trim()
-            .replace(/[^\w\s-]/g, '') // 日本語・記号を抹殺
-            .replace(/[\s_]+/g, '-')  // スペースをハイフンに
-            .replace(/-+/g, '-');     // 連続ハイフンを1つに
+            .replace(/[^\w\s-]/g, '') 
+            .replace(/[\s_]+/g, '-')  
+            .replace(/-+/g, '-');     
     }
 
     input.addEventListener('input', () => {
@@ -219,27 +189,52 @@
         counter.classList.toggle('over', len > 75);
     });
 
-    copyBtn.addEventListener('click', () => {
+    function copySlug() {
         const text = preview.textContent;
         if (text !== '---') {
-            navigator.clipboard.writeText(text);
-            const originalText = copyBtn.textContent;
-            copyBtn.textContent = 'Copied!';
-            setTimeout(() => copyBtn.textContent = originalText, 1500);
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = 'Copied!';
+                status.innerText = "✨ Copied to clipboard!";
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                    status.innerText = "";
+                }, 1500);
+            });
         }
-    });
+    }
 
-    clearBtn.addEventListener('click', () => {
+    function clearAll() {
         input.value = '';
         preview.textContent = '---';
         counter.textContent = '0 / 75';
         counter.classList.remove('over');
-    });
+        input.focus();
+    }
 
-    document.getElementById('homeBtn').onclick = () => modal.style.display = 'flex';
-    document.getElementById('close').onclick = () => modal.style.display = 'none';
-    window.onclick = (event) => { if (event.target == modal) modal.style.display = 'none'; };
+    function showModal() { document.getElementById('installModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('installModal').style.display = 'none'; }
+
+    async function loadFooter() {
+        try {
+            const res = await fetch('footer.json');
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data.kofi) {
+                const k = document.getElementById('kofi-btn');
+                k.href = data.kofi.url;
+                k.innerText = data.kofi.text;
+            }
+            if (data.install) {
+                document.getElementById('install-btn').innerText = data.install.text;
+                document.getElementById('m-title').innerText = data.install.title;
+                document.getElementById('m-desc').innerText = data.install.msg;
+                document.getElementById('m-ios').innerHTML = data.install.ios;
+                document.getElementById('m-and').innerHTML = data.install.android;
+            }
+        } catch(e) {}
+    }
+    window.onload = loadFooter;
 </script>
-
 </body>
 </html>
