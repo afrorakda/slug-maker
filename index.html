@@ -23,11 +23,10 @@
             --error: #ff4d4d;
         }
 
-        /* 長押し選択を抑制 */
+        /* 共通設定：長押し選択を強力に抑制 */
         * { 
             -webkit-tap-highlight-color: transparent; 
             box-sizing: border-box; 
-            -webkit-touch-callout: none;
         }
 
         body {
@@ -53,11 +52,11 @@
         .hub-link { 
             text-decoration: none; font-size: 0.7rem; font-weight: 800; color: #999; 
             background: transparent; border: 1px solid #ddd; padding: 5px 10px; border-radius: 10px;
-            user-select: none;
+            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
         }
 
         .input-group { display: flex; flex-direction: column; gap: 6px; position: relative; }
-        label { font-size: 0.7rem; font-weight: 800; color: #aaa; padding-left: 5px; user-select: none; }
+        label { font-size: 0.7rem; font-weight: 800; color: #aaa; padding-left: 5px; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 
         textarea {
             width: 100%; height: 100px;
@@ -65,9 +64,8 @@
             border-radius: var(--radius); padding: 15px;
             font-size: 17px; color: var(--main); outline: none; transition: 0.2s;
             line-height: 1.4; font-weight: 600; resize: none;
-            /* iOS Safari対策 */
             -webkit-appearance: none; -webkit-text-fill-color: var(--main); opacity: 1 !important;
-            user-select: text; /* テキストエリアは選択可能に */
+            user-select: text;
         }
         textarea:focus { border-color: var(--main); background: #fff; }
         textarea::placeholder { color: var(--placeholder); -webkit-text-fill-color: var(--placeholder); }
@@ -77,18 +75,22 @@
             width: 28px; height: 28px; background: rgba(0,0,0,0.05); color: #888;
             border-radius: 50%; display: none; align-items: center; justify-content: center;
             font-size: 16px; font-weight: bold; border: none; cursor: pointer;
-            user-select: none;
+            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
         }
         textarea:not(:placeholder-shown) + .clr-btn { display: flex; }
 
-        /* プレビューエリア：フラッシュ演出用の設定 */
+        /* プレビューエリア：長押しメニューを完全に排除 */
         .preview-box {
             background: var(--accent); border-radius: var(--radius);
             padding: 20px; min-height: 80px; word-break: break-all;
             display: flex; align-items: center; justify-content: center;
             font-weight: 800; font-family: ui-monospace, monospace; font-size: 1.1rem;
             text-align: center; color: var(--main); transition: background 0.2s;
-            user-select: none; position: relative; overflow: hidden;
+            position: relative; overflow: hidden;
+            /* 強力な長押し・選択禁止 */
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
         }
         .preview-box.flash { background: #fff; border: 2.5px solid var(--main); }
 
@@ -98,7 +100,7 @@
             border: none; border-radius: var(--radius);
             padding: 18px; font-size: 1.1rem; font-weight: 900;
             cursor: pointer; -webkit-appearance: none;
-            user-select: none;
+            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
         }
         @media (hover: hover) { .main-btn:hover { opacity: 0.9; } }
         .main-btn:active { transform: scale(0.97); }
@@ -107,18 +109,19 @@
             background: var(--accent); padding: 18px 15px;
             border-radius: var(--radius); font-size: 0.8rem;
             font-weight: 800; min-width: 75px; text-align: center;
-            user-select: none;
+            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
         }
         .counter-badge.over { color: var(--error); border: 2px solid var(--error); }
 
-        .status-msg { height: 24px; text-align: center; font-size: 0.8rem; font-weight: 800; color: #4CAF50; user-select: none; }
+        .status-msg { height: 24px; text-align: center; font-size: 0.8rem; font-weight: 800; color: #4CAF50; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 
-        footer { width: 100%; padding: 40px 0; text-align: center; border-top: 1px solid #f5f5f5; user-select: none; }
+        footer { width: 100%; padding: 40px 0; text-align: center; border-top: 1px solid #f5f5f5; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
         .footer-btns { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; align-items: center; }
         .outline-btn { 
             width: 100%; max-width: 240px; background: #fff; color: var(--main); border: 2px solid var(--main); 
             padding: 12px; border-radius: var(--radius); text-decoration: none; 
             font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
+            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
         }
         @media (hover: hover) { .outline-btn:hover { background: var(--hover-bg); } }
         
@@ -208,16 +211,12 @@
 
     function copySlug() {
         const text = preview.textContent;
-        // コピーガード: 初期状態や空の状態では動作させない
         if (text === '---' || text === '') return;
 
         navigator.clipboard.writeText(text).then(() => {
-            // 視覚的フィードバック
             const originalText = copyBtn.textContent;
             copyBtn.textContent = 'Copied!';
             status.innerText = "✨ Copied to clipboard!";
-            
-            // フラッシュ演出
             preview.classList.add('flash');
             
             setTimeout(() => {
@@ -239,13 +238,10 @@
     function showModal() { document.getElementById('installModal').style.display = 'flex'; }
     function closeModal() { document.getElementById('installModal').style.display = 'none'; }
 
-    // 補助ロジック: JSONがあれば上書き
     async function loadFooter() {
         try {
             const res = await fetch('footer.json');
-            if (res.ok) {
-                // 必要に応じてJSONの内容で上書きするロジックをここに
-            }
+            if (res.ok) { /* JSON連携用のプレースホルダー */ }
         } catch(e) {}
     }
     window.onload = loadFooter;
